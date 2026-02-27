@@ -26,22 +26,22 @@ jobs:
     steps:
       - name: Configure AWS Credentials via OIDC
         id: configure_aws
-        uses: stacks-sbtc/actions/aws/configure-aws-credentials@505c42b153ba2ac261c276e96bc5dc7b68d61039
+        uses: stx-labs/actions/aws/configure-aws-credentials@ed353a33594a2fa97ea6702d838e4a935cce374d
         with:
           role-to-assume: ${{ secrets['AWS_ROLE_ARN'] }}
           aws-region: ${{ vars['AWS_REGION'] }}
 
       - name: Login to Amazon ECR
         id: ecr_login
-        uses: stacks-sbtc/actions/aws/amazon-ecr-login@505c42b153ba2ac261c276e96bc5dc7b68d61039
+        uses: stx-labs/actions/aws/amazon-ecr-login@ed353a33594a2fa97ea6702d838e4a935cce374d
 
       - name: Checkout Repository
         id: checkout_repository
-        uses: stacks-sbtc/actions/checkout@505c42b153ba2ac261c276e96bc5dc7b68d61039
+        uses: stx-labs/actions/checkout@ed353a33594a2fa97ea6702d838e4a935cce374d
 
       - name: Docker Metadata
         id: docker_metadata
-        uses: stacks-sbtc/actions/docker/metadata-action@505c42b153ba2ac261c276e96bc5dc7b68d61039
+        uses: stx-labs/actions/docker/metadata-action@ed353a33594a2fa97ea6702d838e4a935cce374d
         with:
           images: |
             ${{ steps.ecr_login.outputs.registry }}/${{ vars['AWS_ECR'] }}
@@ -52,7 +52,7 @@ jobs:
 
       - name: Build and Push
         id: docker_build
-        uses: stacks-sbtc/actions/docker/build-push-action@505c42b153ba2ac261c276e96bc5dc7b68d61039
+        uses: stx-labs/actions/docker/build-push-action@ed353a33594a2fa97ea6702d838e4a935cce374d
         with:
           file: ./Dockerfile
           platforms: ${{ env.docker_platforms }}
@@ -64,7 +64,7 @@ jobs:
 
       - name: Generate artifact attestation
         id: generate_attestation
-        uses: stacks-sbtc/actions/attest-build-provenance@505c42b153ba2ac261c276e96bc5dc7b68d61039
+        uses: stx-labs/actions/attest-build-provenance@ed353a33594a2fa97ea6702d838e4a935cce374d
         with:
           subject-name: ${{ steps.ecr_login.outputs.registry }}/${{ vars['AWS_ECR'] }}
           subject-digest: ${{ steps.docker_build.outputs.digest }}
